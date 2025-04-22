@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tính giá order hàng Trung</title>
+</head>
+<body>
+  <h1>Tính giá Order Hàng Trung Quốc</h1>
+  <label>Giá sản phẩm (¥): <input id="price" type="number"></label><br>
+  <label>Tỉ giá (VNĐ/¥): <input id="rate" type="number" value="3660"></label><br>
+  <label>Phí dịch vụ (%): <input id="fee" type="number" value="5"></label><br>
+  <button onclick="calc()">Tính</button>
+  <p id="result"></p>
+
+  <script>
+    function calc() {
+      let price = parseFloat(document.getElementById('price').value);
+      let rate = parseFloat(document.getElementById('rate').value);
+      let fee = parseFloat(document.getElementById('fee').value);
+      let total = price * rate * (1 + fee / 100);
+      document.getElementById('result').innerText = 'Tổng giá: ' + total.toLocaleString() + ' VNĐ';
+    }
+  </script>
+</body>
+</html>
