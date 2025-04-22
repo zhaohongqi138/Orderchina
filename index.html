@@ -2,23 +2,87 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Tính giá order hàng Trung</title>
+  <title>Tính giá Order Hàng Trung Quốc</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      background-color: #f9f9f9;
+    }
+    h1 { color: #0077cc; }
+    label { display: block; margin: 10px 0 5px; }
+    input { width: 100%; padding: 8px; margin-bottom: 10px; }
+    button {
+      padding: 10px 20px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover { background-color: #005fa3; }
+    #result { margin-top: 20px; font-weight: bold; }
+  </style>
 </head>
 <body>
-  <h1>Tính giá Order Hàng Trung Quốc</h1>
-  <label>Giá sản phẩm (¥): <input id="price" type="number"></label><br>
-  <label>Tỉ giá (VNĐ/¥): <input id="rate" type="number" value="3660"></label><br>
-  <label>Phí dịch vụ (%): <input id="fee" type="number" value="5"></label><br>
-  <button onclick="calc()">Tính</button>
-  <p id="result"></p>
+  <h1>Tính Giá Order Hàng Trung Quốc</h1>
+
+  <label>Giá sản phẩm (¥)</label>
+  <input id="price" type="number" step="0.01">
+
+  <label>Tỷ giá (VNĐ/¥)</label>
+  <input id="rate" type="number" value="3600">
+
+  <label>Phí dịch vụ (%)</label>
+  <input id="fee" type="number" value="5">
+
+  <label>Phí vận chuyển nội địa Trung Quốc (¥)</label>
+  <input id="localShip" type="number" value="0">
+
+  <label>Cân nặng thực tế (kg)</label>
+  <input id="realWeight" type="number" step="0.01">
+
+  <label>Kích thước kiện hàng (cm - Dài x Rộng x Cao)</label>
+  <input id="length" type="number" placeholder="Dài">
+  <input id="width" type="number" placeholder="Rộng">
+  <input id="height" type="number" placeholder="Cao">
+
+  <label>Đơn giá vận chuyển quốc tế (VNĐ/kg)</label>
+  <input id="shipRate" type="number" value="35000">
+
+  <button onclick="calc()">Tính Tổng Chi Phí</button>
+
+  <div id="result"></div>
 
   <script>
     function calc() {
-      let price = parseFloat(document.getElementById('price').value);
-      let rate = parseFloat(document.getElementById('rate').value);
-      let fee = parseFloat(document.getElementById('fee').value);
-      let total = price * rate * (1 + fee / 100);
-      document.getElementById('result').innerText = 'Tổng giá: ' + total.toLocaleString() + ' VNĐ';
+      let price = parseFloat(document.getElementById('price').value) || 0;
+      let rate = parseFloat(document.getElementById('rate').value) || 3600;
+      let fee = parseFloat(document.getElementById('fee').value) || 5;
+      let localShip = parseFloat(document.getElementById('localShip').value) || 0;
+      let realWeight = parseFloat(document.getElementById('realWeight').value) || 0;
+      let length = parseFloat(document.getElementById('length').value) || 0;
+      let width = parseFloat(document.getElementById('width').value) || 0;
+      let height = parseFloat(document.getElementById('height').value) || 0;
+      let shipRate = parseFloat(document.getElementById('shipRate').value) || 35000;
+
+      let productCost = (price + localShip) * rate * (1 + fee / 100);
+      let volWeight = (length * width * height) / 6000;
+      let chargeWeight = Math.max(realWeight, volWeight);
+      let intlShip = chargeWeight * shipRate;
+      let total = productCost + intlShip;
+
+      document.getElementById('result').innerHTML = `
+        🧮 <b>Chi tiết:</b><br>
+        - Giá sản phẩm + ship nội địa: ${(price + localShip)} ¥<br>
+        - Phí dịch vụ: ${fee}%<br>
+        - Cân nặng thực tế: ${realWeight.toFixed(2)} kg<br>
+        - Cân nặng quy đổi: ${volWeight.toFixed(2)} kg<br>
+        - Cân nặng tính phí: ${chargeWeight.toFixed(2)} kg<br>
+        - Phí vận chuyển quốc tế: ${intlShip.toLocaleString()} VNĐ<br>
+        <br>💰 <b>Tổng chi phí (ước tính):</b> <span style="color:green">${total.toLocaleString()} VNĐ</span>
+      `;
     }
   </script>
 </body>
